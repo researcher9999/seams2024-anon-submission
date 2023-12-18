@@ -1,0 +1,6 @@
+[submodule "lib/pydcop-seams2023"]
+	path = lib/pydcop-seams2023
+	url = git@gitlab.com:pauldragan/pydcop-seams2023.git
+[submodule "lib/acsos2023-dec-coord-pydcop"]
+	path = lib/acsos2023-dec-coord-pydcop
+	url = git@github.com:pauldragan/acsos2023-dec-coord-pydcop.git

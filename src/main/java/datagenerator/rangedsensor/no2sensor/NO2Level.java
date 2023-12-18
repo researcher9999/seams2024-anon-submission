@@ -5,6 +5,8 @@ import datagenerator.rangedsensor.api.RangeValue;
 import java.nio.ByteBuffer;
 import java.util.Random;
 
+import util.Constants;
+
 public enum NO2Level implements RangeValue {
 
     VERY_LOW(0, 50),
@@ -13,9 +15,11 @@ public enum NO2Level implements RangeValue {
     HIGH(200, 400),
     VERY_HIGH(400, 600);
 
+    private static final int DEFAULT_SEED = Constants.SEED;
+
     private final int lowerBound;
     private final int upperBound;
-    private final Random random = new Random(1);
+    private final Random random = new Random(DEFAULT_SEED);
 
     NO2Level(int lowerBound, int upperBound) {
         this.lowerBound = lowerBound;

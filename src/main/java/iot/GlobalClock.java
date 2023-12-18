@@ -34,6 +34,14 @@ public class GlobalClock {
         return time;
     }
 
+    public void setTime(LocalTime time) {
+        this.time = time;
+    }
+
+    public LocalTime getTimeAsCopy() {
+        return time.plusSeconds(0);
+    }
+
     /**
      * Increases the time with a given amount of milliseconds.
      * @param milliSeconds

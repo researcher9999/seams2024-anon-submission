@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import java.time.LocalTime;
+
 /**
  * A class representing a map of the environment.
  */
@@ -68,6 +70,41 @@ public class Environment implements Serializable {
      */
     private GlobalClock clock;
 
+    /**
+     * Coordination
+     */
+
+    private GlobalClock lastCoordinated;
+    private GlobalClock nextCoordination;
+    private long coordinationTickMs;
+    private LocalTime coordinationStartedAt;
+    private LocalTime coordinationFinishAt;
+ 
+    public enum CoordinationStatusEnum {
+        NOT_COORDINATED,
+        COORDINATION_STARTED,
+        COORDINATION_FINISHED;
+    }
+
+    private CoordinationStatusEnum coordinationStatus;
+    public CoordinationStatusEnum getCoordinationStatus() {
+        return coordinationStatus;
+    }
+    public void setCoordinationStatus(CoordinationStatusEnum status) {
+        this.coordinationStatus = status;
+    }
+    
+    public void setCoordinationStarted() {
+        coordinationStartedAt = clock.getTimeAsCopy();
+        coordinationFinishAt = coordinationStartedAt.plusSeconds(1);
+    }
+    public LocalTime getCoordiationStarted () {
+        return coordinationStartedAt.plusSeconds(0);
+    }
+
+    public LocalTime getCoordinationFinish () {
+        return coordinationFinishAt.plusSeconds(0);
+    }
 
     private GraphStructure graph;
     private MapHelper mapHelper;
@@ -105,6 +142,17 @@ public class Environment implements Serializable {
         this.mapHelper = new MapHelper(this.origin);
 
         numberOfRuns = 1;
+
+        coordinationStatus = CoordinationStatusEnum.NOT_COORDINATED;
+        lastCoordinated = new GlobalClock();
+        lastCoordinated.setTime(this.clock.getTimeAsCopy());
+
+        // coordinationTickMs = 10*60000;
+        coordinationTickMs = 2000;
+        nextCoordination = new GlobalClock();
+        nextCoordination.setTime(this.lastCoordinated.getTimeAsCopy());
+        nextCoordination.tick(coordinationTickMs);
+                
     }
 
     public static int getMapWidth() {
@@ -127,6 +175,14 @@ public class Environment implements Serializable {
      */
     public GlobalClock getClock() {
         return clock;
+    }
+
+    public void tickCoordinationClock() {
+        nextCoordination.tick(coordinationTickMs);
+    }
+
+    public LocalTime getNextCoordinationTime() {
+        return nextCoordination.getTimeAsCopy();
     }
 
     /**
@@ -153,8 +209,6 @@ public class Environment implements Serializable {
     public MapHelper getMapHelper() {
         return this.mapHelper;
     }
-
-
 
     /**
      * Determines if a x-coordinate is valid on the map

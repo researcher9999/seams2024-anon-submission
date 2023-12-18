@@ -7,7 +7,11 @@ import util.Pair;
 
 import java.io.Serializable;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A class representing a packet in the LoraWan simulation.
@@ -73,6 +77,10 @@ public class LoraTransmission implements Serializable{
      * true if the transmission is collided to another one, false otherwise
      */
     private boolean collided;
+    private Set<LoraTransmission> collidedWith;
+
+    private boolean duplicate;
+    private Set<LoraTransmission> duplicateWith;
     //endregion
 
     //region constructor
@@ -95,6 +103,9 @@ public class LoraTransmission implements Serializable{
         this.content = content;
         this.arrived = false;
         this.collided = false;
+        this.collidedWith = new HashSet<LoraTransmission>();
+        this.duplicate = false;
+        this.duplicateWith = new HashSet<LoraTransmission>();
 
         if (isValidTransmissionPower(transmissionPower)) {
             this.transmissionPower = transmissionPower;
@@ -233,6 +244,49 @@ public class LoraTransmission implements Serializable{
 
         }
         return this;
+    }
+
+    public LoraTransmission addToCollidedWith(LoraTransmission transmission) {
+        if (isArrived()) {
+            new IllegalStateException("the transmission is already arrived, you can't modify this property").printStackTrace();
+        } else {
+            this.collidedWith.add(transmission);
+            this.setCollided();
+        }
+        return this;
+    }
+
+    public List<LoraTransmission> getCollidedWith() {
+        return new ArrayList<LoraTransmission>(this.collidedWith);
+    }
+
+    public boolean isDuplicated() {
+        return duplicate;
+    }
+
+    public LoraTransmission setDuplicated() {
+        if (isDuplicated()) {
+            new IllegalStateException("the transmission is already arrived, you can't modify this property").printStackTrace();
+        }
+        if (!isDuplicated()) {
+            this.duplicate = true;
+
+        }
+        return this;
+    }
+
+    public LoraTransmission addToDuplicatedBy(LoraTransmission transmission) {
+        if (isArrived()) {
+            new IllegalStateException("the transmission is already arrived, you can't modify this property").printStackTrace();
+        } else {
+            this.duplicateWith.add(transmission);
+            this.setDuplicated();
+        }
+        return this;
+    }
+
+    public List<LoraTransmission> getDuplicatedBy() {
+        return new ArrayList<LoraTransmission>(this.duplicateWith);
     }
 
     /**

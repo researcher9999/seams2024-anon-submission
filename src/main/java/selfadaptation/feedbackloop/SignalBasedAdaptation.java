@@ -103,6 +103,7 @@ public class SignalBasedAdaptation extends GenericFeedbackLoop {
          */
         getGatewayBuffer().add(mote, gateway);
         if (getGatewayBuffer().hasReceivedAllSignals(mote)) {
+            System.out.println("Running SignalBased adaptation for mote " + mote.getEUI());
             /**
              * check what is the highest received signal strength.
              */
@@ -112,6 +113,7 @@ public class SignalBasedAdaptation extends GenericFeedbackLoop {
             double receivedPower = receivedSignals.get(0).getTransmissionPower();
 
             for (LoraTransmission transmission : receivedSignals) {
+                // System.out.println(transmission.getSender() + " " + transmission.getReceiver());
                 if (receivedPower < transmission.getTransmissionPower()) {
                     receivedPower = transmission.getTransmissionPower();
                 }

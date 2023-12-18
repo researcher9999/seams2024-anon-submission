@@ -139,6 +139,10 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+# Python
+*.pyc
+*__pycache__*
+
 # Editor-based Rest Client
 .idea/httpRequests
 

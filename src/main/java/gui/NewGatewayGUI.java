@@ -9,6 +9,8 @@ import iot.networkentity.Gateway;
 import org.jxmapviewer.viewer.GeoPosition;
 import util.MapHelper;
 
+import util.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
@@ -26,7 +28,8 @@ public class NewGatewayGUI {
     private JTextField LongitudeTextField;
     private Environment environment;
 
-    private Random random = new Random();
+    private static final int DEFAULT_SEED = Constants.SEED;
+    private Random random = new Random(DEFAULT_SEED);
 
 
     public NewGatewayGUI(Environment environment, GeoPosition geoPosition, JFrame frame, ConfigureGatewayPanel parent) {

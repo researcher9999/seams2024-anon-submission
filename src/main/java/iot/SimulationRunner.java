@@ -13,6 +13,7 @@ import iot.networkentity.NetworkServer;
 import org.jetbrains.annotations.NotNull;
 import selfadaptation.adaptationgoals.IntervalAdaptationGoal;
 import selfadaptation.adaptationgoals.ThresholdAdaptationGoal;
+import selfadaptation.feedbackloop.CoordinationBasedAdaptation;
 import selfadaptation.feedbackloop.GenericFeedbackLoop;
 import selfadaptation.feedbackloop.ReliableEfficientDistanceGateway;
 import selfadaptation.feedbackloop.SignalBasedAdaptation;
@@ -46,6 +47,8 @@ public class SimulationRunner {
     private RoutingApplication routingApplication;
     private PollutionMonitor pollutionMonitor;
     private NetworkServer networkServer;
+
+    private Thread simulationThread;
 
 
 
@@ -82,6 +85,9 @@ public class SimulationRunner {
 
         ReliableEfficientDistanceGateway reliableEfficientDistanceGateway = new ReliableEfficientDistanceGateway();
         algorithms.add(reliableEfficientDistanceGateway);
+
+        CoordinationBasedAdaptation coordinationBasedAdaptation = new CoordinationBasedAdaptation();
+        algorithms.add(coordinationBasedAdaptation);
 
 
         /*
@@ -228,6 +234,27 @@ public class SimulationRunner {
         }).start();
     }
 
+    public void simulateNoUpdate(boolean coordinate) {
+        this.simulationThread = new Thread(() -> {
+            long simulationStep = 0;
+            while (!this.isSimulationFinished()) {
+                this.simulation.simulateStepCoordination(coordinate);
+            }
+
+            MARLClient client = this.simulation.getMarlClient();
+            client.notifyDone();
+
+            // Restore the initial positions after the run
+            // listener.update();
+            // listener.onEnd();
+        });
+        simulationThread.start();
+    }
+
+    public void simulationWaitFinish() throws InterruptedException {
+        this.simulationThread.join();
+    }
+
 
     @SuppressWarnings("unused")
     public void totalRun() {
@@ -244,7 +271,7 @@ public class SimulationRunner {
             .getNumberOfRuns();
         setupSingleRun(true);
 
-        new Thread(() -> {
+        Thread simulationThread = new Thread(() -> {
             fn.accept(new Pair<>(0, nrOfRuns));
 
             for (int i = 0; i < nrOfRuns; i++) {
@@ -260,7 +287,8 @@ public class SimulationRunner {
                     setupSingleRun(false);
                 }
             }
-        }).start();
+        });
+        simulationThread.start();
     }
 
     // endregion

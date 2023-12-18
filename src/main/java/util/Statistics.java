@@ -25,11 +25,14 @@ public class Statistics {
     // A list with the transmissions transmitted by the entity
     private final Map<Long, List<LoraTransmissionDataPoint>> sentTransmissions;
 
+    private final Map<Long, List<FailedTransmisionToGaywaysDataPoint>> failedTransmissionToGateways;
+
     private Statistics() {
         powerSettingHistory = new HashMap<>();
         spreadingFactorHistory = new HashMap<>();
         receivedTransmissions = new HashMap<>();
         sentTransmissions = new HashMap<>();
+        failedTransmissionToGateways = new HashMap<>();
     }
 
     public static Statistics getInstance() {
@@ -74,6 +77,16 @@ public class Statistics {
         lists.add(new LoraTransmissionDataPoint(runNumber, entry));
     }
 
+    public void addFailedTransmissionToGatewaysEntry(NetworkEntity networkEntity, long number) {
+        addFailedTransmissionToGatewaysEntry(networkEntity.getEUI(), number);
+    }
+
+    public void addFailedTransmissionToGatewaysEntry(long networkEntity, long number) {
+        initIfAbsent(failedTransmissionToGateways, networkEntity);
+        var lists = failedTransmissionToGateways.get(networkEntity);
+        lists.add(new FailedTransmisionToGaywaysDataPoint(runNumber, number));
+    }
+
     private <E> void initIfAbsent(Map<Long, List<E>> map, long id) {
         if (!map.containsKey(id)) {
             map.put(id, new LinkedList<E>());
@@ -85,6 +98,7 @@ public class Statistics {
         spreadingFactorHistory.clear();
         receivedTransmissions.clear();
         sentTransmissions.clear();
+        failedTransmissionToGateways.clear();
 
         runNumber = 0;
     }
@@ -126,10 +140,15 @@ public class Statistics {
     }
 
     public LinkedHashSet<LoraTransmission> getAllReceivedTransmissions(long eui, int run) {
-        return getReceivedTransmissions(eui).stream()
-            .filter(o -> o.runNumber == run)
-            .map(o -> o.transmission)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        var received = getReceivedTransmissions(eui);
+        if (received == null) {
+            return new LinkedHashSet<LoraTransmission>();
+        } else {
+            return getReceivedTransmissions(eui).stream()
+                .filter(o -> o.runNumber == run)
+                .map(o -> o.transmission)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
     }
 
 
@@ -152,6 +171,14 @@ public class Statistics {
             i++;
         }
         return usedEnergy;
+    }
+
+    public List<Long> getFailedTransmissionToGatewaysEntry(long networkEntity, int run) {
+        initIfAbsent(this.failedTransmissionToGateways, networkEntity);
+        return this.failedTransmissionToGateways.get(networkEntity).stream()
+                                                .filter(t -> t.runNumber == run)
+                                                .map(t -> t.number)
+                                                .collect(Collectors.toList());
     }
 
 
@@ -185,6 +212,16 @@ public class Statistics {
         LoraTransmissionDataPoint(int runNumber, LoraTransmission transmission) {
             this.runNumber = runNumber;
             this.transmission = transmission;
+        }
+    }
+
+    public static class FailedTransmisionToGaywaysDataPoint {
+        public int runNumber;
+        public long number;
+
+        FailedTransmisionToGaywaysDataPoint(int runNumber, long number) {
+            this.runNumber = runNumber;
+            this.number = number;
         }
     }
 }

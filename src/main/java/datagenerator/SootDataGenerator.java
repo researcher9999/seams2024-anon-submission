@@ -6,12 +6,14 @@ import util.Pair;
 import java.time.LocalTime;
 import java.util.Random;
 
+import util.Constants;
+
 /**
  * A class representing a sensor for soot.
  */
 public class SootDataGenerator implements SensorDataGenerator {
 
-    private static final int DEFAULT_SEED = 1;
+    private static final int DEFAULT_SEED = Constants.SEED;
     private static Random random = new Random(DEFAULT_SEED);
 
     public static double generateData(double x, double y) {

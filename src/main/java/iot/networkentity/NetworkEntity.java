@@ -263,7 +263,7 @@ public abstract class NetworkEntity implements Serializable {
 
 
 
-    protected Environment getEnvironment() {
+    public Environment getEnvironment() {
         return this.environment;
     }
 
@@ -284,7 +284,15 @@ public abstract class NetworkEntity implements Serializable {
                 Statistics statistics = Statistics.getInstance();
                 statistics.addPowerSettingEntry(this.getEUI(), environment.getClock().getTime().toSecondOfDay(), getTransmissionPower());
                 statistics.addSpreadingFactorEntry(this.getEUI(), this.getSF());
-                statistics.addSentTransmissionsEntry(this.getEUI(), t);
+                long failed_gateways = 0;
+                if (this instanceof Mote) {
+                    List<Long> gatewaysEUIs = environment.getGateways().stream().map(g -> g.getEUI()).collect(Collectors.toList());
+                    failed_gateways = environment.getGateways().size() - t.stream().filter(tp -> gatewaysEUIs.contains(tp.getLeft().getID())).count();
+                    System.out.println("Failed gateways " + failed_gateways);
+                }
+                // long failed_gateways = environment.getGateways().size() - success_gateways;
+                statistics.addFailedTransmissionToGatewaysEntry(this.getEUI(), failed_gateways);
+                statistics.addSentTransmissionsEntry(this.getEUI(), t.get(0).getRight());
             });
     }
 

@@ -13,11 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import util.Pair;
 import util.TimeHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import util.Constants;
 
 public class SenderNoWaitPacket implements Sender {
 
@@ -26,11 +29,13 @@ public class SenderNoWaitPacket implements Sender {
     private boolean isTransmitting;
     private final NetworkEntity sender;
     private final Environment env;
+
+    private static final int DEFAULT_SEED = Constants.SEED;
     /**
      * TODO thing if set the seed or put inside the moveTo method
      * A Random necessary for the gaussian in the model.
      */
-    private final Random random = new Random();
+    private final Random random = new Random(DEFAULT_SEED);
 
     public SenderNoWaitPacket(NetworkEntity sender, Environment environment) {
         reset();
@@ -40,7 +45,7 @@ public class SenderNoWaitPacket implements Sender {
 
 
     @Override
-    public Optional<LoraTransmission> send(@NotNull LoraWanPacket packet, @NotNull Set<Receiver> receivers) {
+    public Optional<List<Pair<Receiver, LoraTransmission>>> send(@NotNull LoraWanPacket packet, @NotNull Set<Receiver> receivers) {
         if (!isTransmitting) {
             var payloadSize = packet.getPayload().length + packet.getFrameHeader().getFOpts().length;
             if (regionalParameter.getMaximumPayloadSize() < payloadSize) {
@@ -65,7 +70,9 @@ public class SenderNoWaitPacket implements Sender {
             var clock = env.getClock();
             clock.addTriggerOneShot(clock.getTime().plusNanos((long) TimeHelper.miliToNano(timeOnAir)),
                 () -> isTransmitting = false);
-            return ret;
+
+            List<Pair<Receiver, LoraTransmission>> toReturn = new ArrayList<Pair<Receiver, LoraTransmission>>(filteredSet);
+            return Optional.of(toReturn);
         } else {
             throw new IllegalStateException("impossible send two packet at the same time");
         }

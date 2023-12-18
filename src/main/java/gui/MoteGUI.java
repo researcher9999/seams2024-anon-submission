@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import util.Constants;
+
 public class MoteGUI {
     private JPanel mainPanel;
     private JTextField EUItextField;
@@ -56,6 +58,8 @@ public class MoteGUI {
     private MainGUI mainGUI;
     private Mote mote;
 
+    private static final int DEFAULT_SEED = Constants.SEED;
+
     public MoteGUI(Environment environment, Pair<Integer, Integer> pos, JFrame frame, Refreshable parent, MainGUI mainGUI, Mote mote) {
         this(environment, environment.getMapHelper().toGeoPosition(pos), frame, parent, mainGUI, mote);
     }
@@ -67,7 +71,7 @@ public class MoteGUI {
     public MoteGUI(Environment environment, GeoPosition geoPosition, JFrame frame, Refreshable parent, MainGUI mainGUI, Mote mote) {
         // region Initializing fields/params
         this.environment = environment;
-        this.random = new Random();
+        this.random = new Random(DEFAULT_SEED);
         this.mainGUI = mainGUI;
         this.mote = mote;
 

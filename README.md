@@ -1,3 +1,31 @@
+# Coordinated online reinforcement learning for self-adaptive systems -- Submitted @SEAMS2024
+
+Requires a Python 3.12 virtual environment called venv_312. Source the
+venv and install the required Python packages using:
+
+pip install -r requirements.txt
+
+Run the experiments using:
+
+bash run_experiments.sh
+
+The experiments will take a while. The results are stored in
+results_#motes_good.sqlite3, where # is the number of motes in that
+experiment.
+
+Plot the results for one *.sqlite3 using (Figure 4 in the paper):
+
+python plot_results.py [file_path]
+
+Plot the scalability results (Figure 5 in the paper) using:
+
+python plot_result_scalability.py
+
+Output the data from Table 1 for one *.sqlite3 using:
+
+python plot_table.py [file_path]
+
+
 # DingNet
 The source code for the DingNet simulator.
 

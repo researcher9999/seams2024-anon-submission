@@ -94,7 +94,22 @@ public class UserMote extends Mote {
 
     @Override
     public boolean isArrivedToDestination() {
-        return this.getPosInt().equals(this.getEnvironment().getMapHelper().toMapCoordinate(destination));
+        // return this.getPosInt().equals(this.getEnvironment().getMapHelper().toMapCoordinate(destination));
+
+        // if (path.isEmpty()) {
+        //     return true;
+        // }
+        //noinspection OptionalGetWithoutIsPresent(if the path is not empty the destination is present)
+        var mapcoordinate = this.getEnvironment().getMapHelper().toMapCoordinate(this.getDestination());
+        // System.out.println("Destination: " + mapcoordinate.getLeft() + " " + mapcoordinate.getRight() + " Position: " + getPosInt().getLeft() + " " + getPosInt().getRight());
+        boolean equals_left = Integer.compare(mapcoordinate.getLeft(), getPosInt().getLeft()) == 0;
+        boolean equals_right = Integer.compare(mapcoordinate.getRight(), getPosInt().getRight()) == 0;
+        // if (!(equals_left && equals_right)) {
+        //     System.out.println("Mote " + this.getEUI() + " Destination: " + mapcoordinate.getLeft() + " " + mapcoordinate.getRight() + " Position: " + getPosInt().getLeft() + " " + getPosInt().getRight() + " " + equals_left + " " + equals_right);
+        // }
+        return equals_left && equals_right;
+        // return this.getEnvironment().getMapHelper()
+            // .toMapCoordinate(path.getDestination().get()).equals(getPosInt());
     }
 
 

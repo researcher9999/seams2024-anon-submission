@@ -4,6 +4,7 @@ package iot.networkcommunication.api;
 import iot.lora.LoraTransmission;
 import iot.lora.LoraWanPacket;
 import iot.lora.RegionalParameter;
+import util.Pair;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public interface Sender {
      * @param receivers the set of receivers
      * @return a copy of the transmission sent, if the packet is sent
      */
-    Optional<LoraTransmission> send(LoraWanPacket packet, Set<Receiver> receivers);
+    Optional<List<Pair<Receiver, LoraTransmission>>> send(LoraWanPacket packet, Set<Receiver> receivers);
 
     /**
      *

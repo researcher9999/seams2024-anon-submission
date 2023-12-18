@@ -11,7 +11,10 @@ import iot.strategy.store.MaintainLastPacket;
 import iot.strategy.store.ReceivedPacketStrategy;
 import org.jxmapviewer.viewer.GeoPosition;
 import util.MapHelper;
+import util.Pair;
 import util.Path;
+
+import util.Constants;
 
 import java.util.*;
 
@@ -30,6 +33,8 @@ public class Mote extends NetworkEntity {
     private static final int DEFAULT_PERIOD_SENDING_PACKET = 20;
     // default application identifier
     private static final long DEFAULT_APPLICATION_EUI = 1;
+
+    private static final int DEFAULT_SEED = Constants.SEED;
 
 
     // A List of MoteSensors representing all sensors on the mote.
@@ -129,7 +134,7 @@ public class Mote extends NetworkEntity {
     public Mote(long DevEUI, int xPos, int yPos, int transmissionPower, int SF,
                 List<MoteSensor> moteSensors, int energyLevel, Path path, double movementSpeed, Environment environment) {
         this(DevEUI,xPos,yPos, transmissionPower,SF,moteSensors,energyLevel,path, movementSpeed,
-            Math.abs((new Random()).nextInt(5)), DEFAULT_PERIOD_SENDING_PACKET, DEFAULT_START_SENDING_OFFSET, environment);
+            Math.abs((new Random(DEFAULT_SEED)).nextInt(5)), DEFAULT_PERIOD_SENDING_PACKET, DEFAULT_START_SENDING_OFFSET, environment);
     }
 
 
@@ -430,7 +435,19 @@ public class Mote extends NetworkEntity {
             return true;
         }
         //noinspection OptionalGetWithoutIsPresent(if the path is not empty the destination is present)
-        return this.getEnvironment().getMapHelper()
-            .toMapCoordinate(path.getDestination().get()).equals(getPosInt());
+        var mapcoordinate = this.getEnvironment().getMapHelper().toMapCoordinate(path.getDestination().get());
+        // System.out.println("Destination: " + mapcoordinate.getLeft() + " " + mapcoordinate.getRight() + " Position: " + getPosInt().getLeft() + " " + getPosInt().getRight());
+        boolean equals_left = Integer.compare(mapcoordinate.getLeft(), getPosInt().getLeft()) == 0;
+        boolean equals_right = Integer.compare(mapcoordinate.getRight(), getPosInt().getRight()) == 0;
+        // if (!(equals_left && equals_right)) {
+            // System.out.println("Mote " + this.getEUI() + " Destination: " + mapcoordinate.getLeft() + " " + mapcoordinate.getRight() + " Position: " + getPosInt().getLeft() + " " + getPosInt().getRight() + " " + equals_left + " " + equals_right);
+        // }
+        return equals_left && equals_right;
+        // return this.getEnvironment().getMapHelper()
+            // .toMapCoordinate(path.getDestination().get()).equals(getPosInt());
+    }
+
+    public Pair<Integer, Integer> getDestinationInt() {
+        return this.getEnvironment().getMapHelper().toMapCoordinate(path.getDestination().get());
     }
 }

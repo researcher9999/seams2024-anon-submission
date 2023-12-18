@@ -1,0 +1,102 @@
+syntax = "proto3";
+package proto.grpc;
+
+service MARL {
+    rpc GetActions(MotesActionRequest) returns (MotesActionResponse);
+    rpc InitMARL(InitRequest) returns (InitResponse);
+    rpc NotifyDone(DoneNotification) returns (DoneNotificationResponse);
+}
+
+message DoneNotification {
+    bool done = 1;
+}
+
+message DoneNotificationResponse {
+    bool status = 1;
+}
+
+message InitRequest {
+    repeated MoteInfoInit moteInfos = 1;
+}
+
+message InitResponse {
+    bool success = 1;
+}
+
+message MoteInfoInit {
+    string moteName = 1;
+    int64 EUI = 2;
+    double spreadingFactor = 3;
+    repeated string sensors = 4;
+    MoteState moteState = 5;
+}
+
+message MotesActionRequest {
+    repeated MoteState moteStates = 1;
+    int64 timestep = 2;
+}
+
+enum ActionSelectionWay {
+    RANDOM = 0;
+    UNCOORDINATED = 1;
+    COORDINATED = 2;
+    NOADAPTATION = 3;
+}
+
+message MoteState {
+    string moteName = 1;
+    int64 EUI = 2;
+    int32 energyLevel = 3;
+    int32 spreadingFactor = 4;
+    int32 transmissionPower = 5;
+    double movementSpeed = 6;
+    int64 collidedTransmissions = 7;
+    double usedEnergy = 8;
+    map<int64, int64> collidedWith = 9;
+    int64 duplicatedTransmissions = 10;
+    map<int64, int64> duplicatedWith = 11;
+    double posX = 12;
+    double posY = 13;
+    int64 failedTransmissionsGateways = 14;
+    int32 periodSendingPacket = 15;
+    double deltaUsedEnergy = 16;
+    int64 deltaFailedTransmissionsGateways = 17;
+    int64 deltaCollisions = 18;
+    double averageReceivedTransmissionPow = 19;
+    double averageGatewayDistance = 20;
+    map<int64, int64> deltaCollidedWith = 21;
+}
+
+message MoteAction {
+    string moteName = 1;
+    int64 EUI = 2;
+    optional int32 energyLevel = 3;
+    optional int32 spreadingFactor = 4;
+    optional int32 transmissionPower = 5;
+    optional double movementSpeed = 6;
+    optional int32 periodSendingPacket = 7;
+    ActionSelectionWay selWay = 8;
+}
+
+message MotesActionResponse {
+    repeated MoteAction moteActions = 1;
+    int64 timestep = 2;
+    int64 iteration = 3;
+}
+
+message QtablesRewards {
+    repeated QtableReward qtableRewards = 1;
+    int64 timestepLastObservation = 2;
+    int64 timestepCurrentObservation = 3;
+    ActionSelectionWay selWay = 4;
+    int64 iteration = 5;
+}
+
+message QtableReward {
+    string qtableName = 1;
+    string constraintType = 2;
+    double rewardEnergy = 3;
+    double rewardFailures = 4;
+    double rewardCollisions = 5;
+    double rewardTotal = 6;
+}
