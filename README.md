@@ -1,9 +1,17 @@
 # Coordinated online reinforcement learning for self-adaptive systems -- Submitted @SEAMS2024
 
+Tested against Java 17. The file run_experiments.sh exports the
+JAVA_HOME variable.  May require adjustment.
+
+
 Requires a Python 3.12 virtual environment called venv_312. Source the
 venv and install the required Python packages using:
 
 pip install -r requirements.txt
+
+First, generate the Python classes from protobuf sources, using:
+
+bash compile_proto_python.sh
 
 Run the experiments using:
 

@@ -2,7 +2,6 @@ from proto_generated.api_pb2.api_pb2_grpc import MARLServicer, MARLStub, add_MAR
 from proto_generated.api_pb2.api_pb2 import MotesActionResponse, MotesActionRequest, InitResponse, QtablesRewards, QtableReward, DoneNotificationResponse
 import grpc
 from concurrent import futures
-from environments.environment import DingNetMote, parallel_env
 from algorithms.qlearning import QLearning
 
 import logging
@@ -18,6 +17,13 @@ import numpy as np
 from sys import exit
 
 DO_ADAPTATION = True
+
+class DingNetMote:
+    def __init__(self, name, moves, EUI, spreadingFactor):
+        self.name = name
+        self.EUI = EUI
+        self.moves = moves
+        self.spreadingFactor = spreadingFactor
 
 class Rewarder:
     def __init__(self, motes):
