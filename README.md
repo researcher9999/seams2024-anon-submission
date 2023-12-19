@@ -1,45 +1,56 @@
 # Coordinated online reinforcement learning for self-adaptive systems -- Submitted @SEAMS2024
 
 Tested against Java 17. The file run_experiments.sh exports the
-JAVA_HOME variable.  May require adjustment.
+`JAVA_HOME` variable.  May require adjustment.
 
 
-Requires a Python 3.12 virtual environment called venv_312. Source the
+Requires a Python 3.12 virtual environment called `venv_312`. Source the
 venv and install the required Python packages using:
 
+```
 pip install -r requirements.txt
-
+```
 First, generate the Python classes from protobuf sources, using:
 
+```
 bash compile_proto_python.sh
+```
 
 Run the experiments using:
 
+```
 bash run_experiments.sh
+```
 
 The experiments will take a while. The results are stored in
-results_#motes_good.sqlite3, where # is the number of motes in that
+`results_#motes_good.sqlite3`, where # is the number of motes in that
 experiment.
 
-Plot the results for one *.sqlite3 using (Figure 4 in the paper):
+Plot the results for one `*.sqlite3` using (Figure 4 in the paper):
 
+```
 python plot_results.py [file_path]
+```
 
 Plot the scalability results (Figure 5 in the paper) using:
 
+```
 python plot_result_scalability.py
+```
 
 Output the data from Table 1 for one *.sqlite3 using:
 
+```
 python plot_table.py [file_path]
-
+```
 
 Note: The data used for the Experimental Evaluation part of the paper
-is in seams2024_results.zip. To download them use:
+is in `seams2024_results.zip`. To download them use:
 
+```
 git lfs install
 git lfs pull
-
+```
 
 # DingNet
 The source code for the DingNet simulator.
