@@ -34,6 +34,13 @@ Output the data from Table 1 for one *.sqlite3 using:
 python plot_table.py [file_path]
 
 
+Note: The data used for the Experimental Evaluation part of the paper
+is in seams2024_results.zip. To download them use:
+
+git lfs install
+git lfs pull
+
+
 # DingNet
 The source code for the DingNet simulator.
 
